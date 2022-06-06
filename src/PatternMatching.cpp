@@ -33,7 +33,7 @@ std::string PatternMatching::getMatchesStr()
 }
 
 int PatternMatching::add_dictionary(string dictionary_path) {
-    if (contains(m_dictionary_paths, dictionary_path))
+    if (helpers::contains(m_dictionary_paths, dictionary_path))
         return -1;
     
     m_dictionary_paths.push_back(dictionary_path);
@@ -54,7 +54,7 @@ int PatternMatching::add_dictionary(string dictionary_path) {
 }
 
 int PatternMatching::add_file_path(string file_path) {
-    if (contains(m_file_paths, file_path))
+    if (helpers::contains(m_file_paths, file_path))
         return - 1;
     m_file_paths.push_back(file_path);
     return 0;
@@ -69,7 +69,7 @@ int PatternMatching::search() {
             cout << "Can't open file " << file_path << endl;
             continue;
         }
-        string file_path_short = get_short_path(file_path);
+        string file_path_short = helpers::get_short_path(file_path);
         m_matches.insert({ file_path_short, {} });
         while (getline(file, text)) {
             // Parse the text, all matches are returned
@@ -79,6 +79,7 @@ int PatternMatching::search() {
                 m_matches[file_path_short].push_back(emit.get_keyword());
             }
         }
+        helpers::remove_duplicates(m_matches[file_path_short]);
         // Close the file 
         file.close();
     }
