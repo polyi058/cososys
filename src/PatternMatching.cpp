@@ -18,6 +18,9 @@ std::map<std::string, std::vector<std::string>> PatternMatching::getMatches()
     return m_matches;
 }
 
+// Return matches under the following format:
+// <filename_1>: <match_1_1>, <match_1_2>, ...
+// <filename_2>: <match_2_1>, <match_2_2>, ...
 std::string PatternMatching::getMatchesStr()
 {
     string matches_str;
@@ -32,6 +35,7 @@ std::string PatternMatching::getMatchesStr()
     return matches_str;
 }
 
+// Register dictionary and insert into the trie
 int PatternMatching::add_dictionary(string dictionary_path) {
     if (helpers::contains(m_dictionary_paths, dictionary_path))
         return -1;
@@ -53,6 +57,7 @@ int PatternMatching::add_dictionary(string dictionary_path) {
     return 0;
 }
 
+// Register new file path
 int PatternMatching::add_file_path(string file_path) {
     if (helpers::contains(m_file_paths, file_path))
         return - 1;
@@ -60,15 +65,18 @@ int PatternMatching::add_file_path(string file_path) {
     return 0;
 }
 
+// Search for matches
 int PatternMatching::search() {
     string text;
     m_matches.clear();
+    // Loop through the file paths holding the texts
     for (string file_path : m_file_paths) {
         ifstream file(file_path);
         if (!file.is_open()) {
             cout << "Can't open file " << file_path << endl;
             continue;
         }
+        // Get only the file name from a path (+ extension)
         string file_path_short = helpers::get_short_path(file_path);
         m_matches.insert({ file_path_short, {} });
         while (getline(file, text)) {
@@ -80,7 +88,6 @@ int PatternMatching::search() {
             }
         }
         helpers::remove_duplicates(m_matches[file_path_short]);
-        // Close the file 
         file.close();
     }
     return 0;
